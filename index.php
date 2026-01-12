@@ -179,6 +179,6 @@
         </div>
     </footer>
 
-</body>
+</body> 
 
 </html>
