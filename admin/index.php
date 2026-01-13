@@ -1,11 +1,25 @@
 <?php
 session_start();
+require "../config/database.php";
 
-// proteksi admin
+/* PROTEKSI ADMIN */
 if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit;
 }
+
+/* STATISTIK */
+$totalUser = mysqli_fetch_assoc(
+    mysqli_query($conn, "SELECT COUNT(*) AS total FROM users")
+)['total'];
+
+$totalBuku = mysqli_fetch_assoc(
+    mysqli_query($conn, "SELECT COUNT(*) AS total FROM buku")
+)['total'];
+
+$totalTransaksi = mysqli_fetch_assoc(
+    mysqli_query($conn, "SELECT COUNT(*) AS total FROM transactions")
+)['total'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -25,7 +39,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'admin') {
             <h1 class="font-bold text-blue-600">📚 BookStore.id (Admin)</h1>
             <div class="flex items-center gap-4">
                 <span class="text-sm text-gray-600">
-                    Admin: <strong><?= $_SESSION['nama']; ?></strong>
+                    Admin: <strong><?= htmlspecialchars($_SESSION['nama']); ?></strong>
                 </span>
                 <a href="../auth/logout.php"
                     class="text-sm text-red-500 hover:underline">
@@ -44,16 +58,19 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'admin') {
         <div class="grid md:grid-cols-4 gap-6 mb-10">
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Total User</h3>
-                <p class="text-2xl font-bold mt-2">0</p>
+                <p class="text-2xl font-bold mt-2"><?= $totalUser; ?></p>
             </div>
+
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Total Buku</h3>
-                <p class="text-2xl font-bold mt-2">0</p>
+                <p class="text-2xl font-bold mt-2"><?= $totalBuku; ?></p>
             </div>
+
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Transaksi</h3>
-                <p class="text-2xl font-bold mt-2">0</p>
+                <p class="text-2xl font-bold mt-2"><?= $totalTransaksi; ?></p>
             </div>
+
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Status Sistem</h3>
                 <p class="text-2xl font-bold mt-2 text-green-600">Online</p>
@@ -62,7 +79,8 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'admin') {
 
         <!-- MENU ADMIN -->
         <div class="grid md:grid-cols-3 gap-6">
-            <a href="#"
+
+            <a href="books.php"
                 class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
                 <h3 class="font-semibold text-lg mb-2">📚 Kelola Buku</h3>
                 <p class="text-sm text-gray-600">
@@ -70,7 +88,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'admin') {
                 </p>
             </a>
 
-            <a href="#"
+            <a href="users.php"
                 class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
                 <h3 class="font-semibold text-lg mb-2">👥 Kelola User</h3>
                 <p class="text-sm text-gray-600">
@@ -78,13 +96,14 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'admin') {
                 </p>
             </a>
 
-            <a href="#"
+            <a href="transaksi.php"
                 class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="font-semibold text-lg mb-2">🧾 Laporan</h3>
+                <h3 class="font-semibold text-lg mb-2">🧾 Riwayat Transaksi</h3>
                 <p class="text-sm text-gray-600">
-                    Statistik & laporan transaksi
+                    Laporan & histori pembelian
                 </p>
             </a>
+
         </div>
 
     </main>

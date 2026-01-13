@@ -5,23 +5,38 @@ require "../config/database.php";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
     $nama     = trim($_POST['nama']);
     $email    = trim($_POST['email']);
     $password = $_POST['password'];
 
+    // VALIDASI INPUT
     if ($nama === "" || $email === "" || $password === "") {
         $error = "Semua field wajib diisi";
     } else {
-        $cek = mysqli_query($conn, "SELECT id FROM users WHERE email='$email'");
+
+        // CEK EMAIL (AMAN)
+        $stmt = mysqli_prepare($conn, "SELECT id FROM users WHERE email = ?");
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+        $cek = mysqli_stmt_get_result($stmt);
+
         if (mysqli_num_rows($cek) > 0) {
             $error = "Email sudah terdaftar";
         } else {
+
+            // HASH PASSWORD
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            mysqli_query(
+
+            // INSERT USER (ROLE DEFAULT USER)
+            $stmt = mysqli_prepare(
                 $conn,
-                "INSERT INTO users (nama,email,password)
-                 VALUES ('$nama','$email','$hash')"
+                "INSERT INTO users (nama, email, password, role)
+                 VALUES (?, ?, ?, 'user')"
             );
+            mysqli_stmt_bind_param($stmt, "sss", $nama, $email, $hash);
+            mysqli_stmt_execute($stmt);
+
             header("Location: login.php");
             exit;
         }
@@ -48,6 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <p class="text-lg opacity-90">
                 Buat akun dan mulai jual beli buku.
             </p>
+            <p class="mt-4 text-sm opacity-80">
+                Cepat • Aman • Terpercaya
+            </p>
         </div>
 
         <!-- REGISTER FORM -->
@@ -56,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <?php if ($error): ?>
                 <div class="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-                    <?= $error; ?>
+                    <?= htmlspecialchars($error); ?>
                 </div>
             <?php endif; ?>
 

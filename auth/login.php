@@ -5,21 +5,42 @@ require "../config/database.php";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = trim($_POST['email']);
+
+    $email    = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-    $user = mysqli_fetch_assoc($query);
-
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['id']   = $user['id'];
-        $_SESSION['nama'] = $user['nama'];
-        $_SESSION['role'] = $user['role'];
-
-        header("Location: ../{$user['role']}/index.php");
-        exit;
+    // VALIDASI
+    if ($email === "" || $password === "") {
+        $error = "Email dan password wajib diisi";
     } else {
-        $error = "Email atau password salah";
+
+        // QUERY AMAN
+        $stmt = mysqli_prepare($conn, "SELECT id, nama, email, password, role FROM users WHERE email = ?");
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+        $user   = mysqli_fetch_assoc($result);
+
+        // CEK USER & PASSWORD
+        if ($user && password_verify($password, $user['password'])) {
+
+            // SET SESSION
+            $_SESSION['login'] = true;
+            $_SESSION['id']    = $user['id'];
+            $_SESSION['nama']  = $user['nama'];
+            $_SESSION['role']  = $user['role'];
+
+            // REDIRECT SESUAI ROLE
+            if ($user['role'] === 'admin') {
+                header("Location: ../admin/index.php");
+            } else {
+                header("Location: ../user/index.php");
+            }
+            exit;
+        } else {
+            $error = "Email atau password salah";
+        }
     }
 }
 ?>
@@ -43,6 +64,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <p class="text-lg opacity-90">
                 Masuk dan mulai jelajahi buku favoritmu.
             </p>
+            <p class="mt-4 text-sm opacity-80">
+                Platform jual beli buku online terpercaya
+            </p>
         </div>
 
         <!-- LOGIN FORM -->
@@ -51,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <?php if ($error): ?>
                 <div class="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-                    <?= $error; ?>
+                    <?= htmlspecialchars($error); ?>
                 </div>
             <?php endif; ?>
 
