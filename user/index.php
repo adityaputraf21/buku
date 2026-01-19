@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-/* Koneksi Database */
 $host = "localhost";
 $user = "root";
 $pass = "";
@@ -12,17 +11,14 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-/* Contoh session user */
 if (!isset($_SESSION['nama'])) {
-    $_SESSION['nama'] = ""; // bisa diganti login dinamis
+    $_SESSION['nama'] = ""; //
 }
 
-/* INIT CART */
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-/* TAMBAH KE CART */
 if (isset($_POST['add_to_cart'])) {
     $id = $_POST['id'];
     $judul = $_POST['judul'];
@@ -44,7 +40,6 @@ if (isset($_POST['add_to_cart'])) {
 
 $totalCart = array_sum(array_column($_SESSION['cart'], 'qty'));
 
-/* Ambil data buku dari database */
 $result = $conn->query("SELECT * FROM buku");
 $bukuList = [];
 if ($result->num_rows > 0) {
@@ -65,7 +60,6 @@ if ($result->num_rows > 0) {
 
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- NAVBAR -->
     <nav class="bg-white fixed w-full z-50 shadow">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-blue-600">📚 BookStore.id</h1>
@@ -78,7 +72,6 @@ if ($result->num_rows > 0) {
             </div>
 
             <div class="flex items-center gap-4">
-                <!-- Cart -->
                 <a href="cart.php" class="relative">
                     🛒
                     <?php if ($totalCart > 0): ?>
@@ -87,8 +80,6 @@ if ($result->num_rows > 0) {
                         </span>
                     <?php endif; ?>
                 </a>
-
-                <!-- Nama dan Logout -->
                 <span class="text-sm font-medium text-gray-700">Halo, <?= $_SESSION['nama'] ?> 👋</span>
                 <a href="../auth/logout.php" class="px-4 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600">
                     Logout
@@ -97,7 +88,6 @@ if ($result->num_rows > 0) {
         </div>
     </nav>
 
-    <!-- HERO -->
     <section class="bg-blue-600 pt-24">
         <div class="max-w-7xl mx-auto px-10 grid md:grid-cols-2 min-h-[calc(100vh-80px)]">
             <div class="flex flex-col justify-center text-white">
@@ -121,7 +111,6 @@ if ($result->num_rows > 0) {
         </div>
     </section>
 
-    <!-- KEUNGGULAN -->
     <section id="tentang" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h3 class="text-3xl font-bold mb-16">Kenapa BookStore.id?</h3>
@@ -145,7 +134,6 @@ if ($result->num_rows > 0) {
         </div>
     </section>
 
-    <!-- BUKU -->
     <section id="buku" class="py-24 bg-gray-100">
         <div class="max-w-7xl mx-auto px-6">
             <h3 class="text-3xl font-bold mb-12 text-center">Buku Populer</h3>
@@ -177,7 +165,6 @@ if ($result->num_rows > 0) {
         </div>
     </section>
 
-    <!-- FOOTER -->
     <footer id="kontak" class="bg-gray-900 text-gray-300 py-12">
         <div class="max-w-7xl mx-auto px-6 text-center">
             © <?= date('Y'); ?> BookStore.id

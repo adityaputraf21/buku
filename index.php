@@ -5,7 +5,6 @@ require "config/database.php";
 // Ambil semua buku dari database
 $buku = mysqli_query($conn, "SELECT * FROM buku ORDER BY id DESC");
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -30,52 +29,52 @@ $buku = mysqli_query($conn, "SELECT * FROM buku ORDER BY id DESC");
                 <a href="#kontak" class="hover:text-blue-600">Kontak</a>
             </div>
 
-            <div class="flex gap-2 items-center">
+            <div class="flex items-center gap-3">
                 <a href="keranjang.php" class="relative text-xl">
                     🛒
                     <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs 
-                     w-5 h-5 flex items-center justify-center rounded-full">
+                w-5 h-5 flex items-center justify-center rounded-full">
                         <?= isset($_SESSION['keranjang']) ? count($_SESSION['keranjang']) : 0 ?>
                     </span>
                 </a>
 
-                <div class="flex gap-2">
+                <?php if (isset($_SESSION['nama'])): ?>
+                    <span class="px-4 py-2 border rounded text-sm">
+                        <?= htmlspecialchars($_SESSION['nama']); ?>
+                    </span>
+                    <a href="auth/logout.php" class="px-4 py-2 bg-red-500 text-white rounded text-sm">
+                        Logout
+                    </a>
+                <?php else: ?>
                     <a href="auth/login.php" class="px-4 py-2 border rounded text-sm">Login</a>
                     <a href="auth/register.php" class="px-4 py-2 bg-blue-600 text-white rounded text-sm">
                         Daftar
                     </a>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </nav>
 
     <!-- HERO -->
-    <section class="bg-blue-600" id="home">
-        <div class="max-w-7xl mx-auto px-10 grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-80px)]">
-            <div class="flex flex-col justify-center text-white">
-                <span class="inline-block bg-blue-500 px-8 py-1 rounded-full text-sm mb-5">
+    <section id="home" class="bg-blue-600 pt-24">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 items-center min-h-[80vh]">
+            <div class="text-white">
+                <span class="inline-block bg-blue-500 px-6 py-1 rounded-full text-sm mb-5">
                     Platform Toko Buku Online
                 </span>
-                <h1 class="text-4xl md:text-7xl font-bold leading-tight mb-6">
-                    Temukan & Beli Buku Favoritmu Secara Online
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                    Temukan & Beli Buku Favoritmu
                 </h1>
-                <p class="text-lg text-blue-100 mb-8 max-w-xl">
-                    Platform jual beli buku digital & fisik dengan proses cepat, aman, dan terpercaya.
+                <p class="text-blue-100 mb-8">
+                    Proses cepat, aman, dan terpercaya.
                 </p>
-                <div class="flex items-center gap-4">
-                    <button id="btnJelajahi" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold">
-                        Jelajahi Buku
-                    </button>
-                    <button onclick="window.location.href='cara_kerja.php'"
-                        class="flex items-center gap-2 text-white opacity-90">
-                        ▶ Cara Kerja
-                    </button>
-                </div>
+                <button id="btnJelajahi" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold">
+                    Jelajahi Buku
+                </button>
             </div>
 
-            <div class="relative flex justify-end items-end overflow-hidden">
-                <img src="assets/img/mahasiswi.png" alt="Hero Buku"
-                    class="relative z-10 w-[420px] md:w-[480px]">
+            <div class="hidden md:block">
+                <img src="assets/img/mahasiswi.png" class="w-[450px] mx-auto">
             </div>
         </div>
     </section>
@@ -84,53 +83,56 @@ $buku = mysqli_query($conn, "SELECT * FROM buku ORDER BY id DESC");
     <section id="tentang" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h3 class="text-3xl font-bold mb-16">Kenapa BookStore.id?</h3>
+
             <div class="grid md:grid-cols-3 gap-10">
-                <?php
-                $fitur = [
-                    ["🛒", "Mudah & Cepat", "Pembelian buku hanya beberapa klik."],
-                    ["🔐", "Aman", "Data pengguna tersimpan dengan aman."],
-                    ["📦", "Update Stok", "Stok buku selalu diperbarui."]
-                ];
-                foreach ($fitur as $f):
-                ?>
-                    <div class="p-8 rounded-2xl shadow hover:shadow-xl hover:-translate-y-1 transition">
-                        <div class="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-full bg-blue-100 text-2xl">
-                            <?= $f[0] ?>
-                        </div>
-                        <h4 class="font-semibold text-lg mb-2"><?= $f[1] ?></h4>
-                        <p class="text-sm text-gray-600"><?= $f[2] ?></p>
-                    </div>
-                <?php endforeach; ?>
+                <div class="p-8 rounded-xl shadow">
+                    <div class="text-3xl mb-4">🛒</div>
+                    <h4 class="font-semibold mb-2">Mudah & Cepat</h4>
+                    <p class="text-gray-600 text-sm">Beli buku hanya beberapa klik.</p>
+                </div>
+                <div class="p-8 rounded-xl shadow">
+                    <div class="text-3xl mb-4">🔐</div>
+                    <h4 class="font-semibold mb-2">Aman</h4>
+                    <p class="text-gray-600 text-sm">Data pengguna terjaga.</p>
+                </div>
+                <div class="p-8 rounded-xl shadow">
+                    <div class="text-3xl mb-4">📦</div>
+                    <h4 class="font-semibold mb-2">Stok Update</h4>
+                    <p class="text-gray-600 text-sm">Stok selalu diperbarui.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- BUKU POPULER -->
+    <!-- BUKU -->
     <section id="buku" class="py-24 bg-gray-100">
         <div class="max-w-7xl mx-auto px-6">
             <h3 class="text-3xl font-bold mb-12 text-center">Buku Populer</h3>
 
             <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
                 <?php while ($row = mysqli_fetch_assoc($buku)): ?>
-                    <div class="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden">
-                        <img src="<?= htmlspecialchars($row['gambar']); ?>" class="h-48 w-full object-cover" alt="<?= htmlspecialchars($row['judul']); ?>">
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <img src="<?= htmlspecialchars($row['gambar']); ?>"
+                            class="h-48 w-full object-cover"
+                            alt="<?= htmlspecialchars($row['judul']); ?>">
+
                         <div class="p-4">
                             <h4 class="font-semibold"><?= htmlspecialchars($row['judul']); ?></h4>
                             <p class="text-sm text-gray-500"><?= htmlspecialchars($row['penulis']); ?></p>
-                            <p class="font-bold text-blue-600 mt-2">Rp <?= number_format($row['harga']); ?></p>
+                            <p class="font-bold text-blue-600 mt-2">
+                                Rp <?= number_format($row['harga']); ?>
+                            </p>
 
                             <?php if (isset($_SESSION['user_id'])): ?>
                                 <form action="tambah_keranjang.php" method="POST">
                                     <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                                    <input type="hidden" name="judul" value="<?= htmlspecialchars($row['judul']); ?>">
-                                    <input type="hidden" name="harga" value="<?= $row['harga']; ?>">
                                     <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm">
                                         + Keranjang
                                     </button>
                                 </form>
                             <?php else: ?>
                                 <a href="auth/login.php"
-                                    class="mt-4 w-full inline-block text-center bg-blue-600 text-white py-2 rounded-lg text-sm">
+                                    class="mt-4 block text-center bg-blue-600 text-white py-2 rounded-lg text-sm">
                                     + Keranjang (Login Dulu)
                                 </a>
                             <?php endif; ?>
@@ -155,8 +157,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku ORDER BY id DESC");
             </div>
             <div>
                 <h4 class="font-bold text-white mb-2">Kontak</h4>
-                <p class="text-sm">Email: support@bookstore.id</p>
-                <p class="text-sm">Telp: 08xxxxxxxx</p>
+                <p class="text-sm">support@bookstore.id</p>
             </div>
             <div>
                 <h4 class="font-bold text-white mb-2">Hak Cipta</h4>
@@ -166,16 +167,11 @@ $buku = mysqli_query($conn, "SELECT * FROM buku ORDER BY id DESC");
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const btnJelajahi = document.getElementById("btnJelajahi");
-            const sectionBuku = document.getElementById("buku");
-            btnJelajahi.addEventListener("click", function() {
-                sectionBuku.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
+        document.getElementById("btnJelajahi").onclick = () => {
+            document.getElementById("buku").scrollIntoView({
+                behavior: "smooth"
             });
-        });
+        };
     </script>
 
 </body>

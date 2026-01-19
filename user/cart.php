@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-/* Koneksi Database */
 $host = "localhost";
 $user = "root";
 $pass = "";
@@ -14,15 +13,13 @@ if ($conn->connect_error) {
 
 /* Contoh session user */
 if (!isset($_SESSION['nama'])) {
-    $_SESSION['nama'] = ""; // ganti sesuai login sebenarnya
+    $_SESSION['nama'] = []; // 
 }
 
-/* INIT CART */
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-/* Update qty */
 if (isset($_POST['update'])) {
     foreach ($_POST['qty'] as $id => $qty) {
         if ($qty <= 0) {
@@ -35,7 +32,6 @@ if (isset($_POST['update'])) {
     exit;
 }
 
-/* Hapus item */
 if (isset($_GET['hapus'])) {
     $id = $_GET['hapus'];
     unset($_SESSION['cart'][$id]);
@@ -43,7 +39,6 @@ if (isset($_GET['hapus'])) {
     exit;
 }
 
-/* Hitung total */
 $total = 0;
 foreach ($_SESSION['cart'] as $item) {
     $total += $item['harga'] * $item['qty'];
@@ -61,7 +56,6 @@ foreach ($_SESSION['cart'] as $item) {
 
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- NAVBAR -->
     <nav class="bg-white fixed w-full z-50 shadow">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-blue-600">📚 BookStore.id</h1>
@@ -130,8 +124,6 @@ foreach ($_SESSION['cart'] as $item) {
         <?php endif; ?>
 
     </div>
-
-    <!-- FOOTER -->
     <footer class="bg-gray-900 text-gray-300 text-center py-12 mt-12">
         © <?= date('Y'); ?> BookStore.id
     </footer>

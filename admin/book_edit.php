@@ -15,12 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $penulis = $_POST['penulis'];
     $harga   = $_POST['harga'];
 
-    // Upload gambar jika ada
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
         $filename = time() . '_' . basename($_FILES['gambar']['name']);
         $target = "../assets/img/" . $filename;
 
-        // Pindahkan file ke folder assets/img
         if (move_uploaded_file($_FILES['gambar']['tmp_name'], $target)) {
             $gambar_sql = ", gambar='$target'";
         } else {

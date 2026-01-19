@@ -14,39 +14,35 @@ if ($conn->connect_error) {
 
 /* Contoh session user */
 if (!isset($_SESSION['nama'])) {
-    $_SESSION['nama'] = "Aditya"; // ganti login sebenarnya
+    $_SESSION['nama'] = [];
 }
 
-/* Cek keranjang kosong */
+
 if (empty($_SESSION['cart'])) {
     header("Location: index.php");
     exit;
 }
 
-/* Hitung total */
+
 $total = 0;
 foreach ($_SESSION['cart'] as $item) {
     $total += $item['harga'] * $item['qty'];
 }
 
-/* Simpan transaksi */
 if (isset($_POST['checkout'])) {
     $nama_user = $_SESSION['nama'];
 
-    // Insert ke tabel transaksi
     $stmt = $conn->prepare("INSERT INTO transaksi (nama_user, total) VALUES (?, ?)");
     $stmt->bind_param("si", $nama_user, $total);
     $stmt->execute();
     $transaksi_id = $stmt->insert_id;
 
-    // Insert ke detail
     $stmtDetail = $conn->prepare("INSERT INTO transaksi_detail (transaksi_id, buku_id, judul, harga, qty) VALUES (?, ?, ?, ?, ?)");
     foreach ($_SESSION['cart'] as $id => $item) {
         $stmtDetail->bind_param("iisii", $transaksi_id, $id, $item['judul'], $item['harga'], $item['qty']);
         $stmtDetail->execute();
     }
 
-    // Kosongkan cart
     $_SESSION['cart'] = [];
 
     header("Location: sukses.php?transaksi_id=$transaksi_id");
@@ -65,7 +61,6 @@ if (isset($_POST['checkout'])) {
 
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- NAVBAR -->
     <nav class="bg-white fixed w-full z-50 shadow">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-blue-600">📚 BookStore.id</h1>

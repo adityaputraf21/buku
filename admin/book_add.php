@@ -12,7 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $penulis = $_POST['penulis'];
     $harga   = $_POST['harga'];
 
-    // Upload gambar jika ada
     $gambar_path = "";
     if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
         $filename = time() . '_' . basename($_FILES['gambar']['name']);
